@@ -13,12 +13,15 @@ Excel ファイルを分割するための Python CLI ツールです。
 ## 主な機能
 
 ### 1. Workbook Split
+
 1つの Excel（複数シート）を、シートごとに 1 ファイルずつに分割します。
 
 ### 2. Hyperlink Rewrite
+
 ブック内リンク（#OtherSheet!A1）を、分割後も有効な外部ファイルリンクに変換します。
 
 ### 3. Sheet Split（オプション）
+
 巨大なシートを行数基準で複数ファイルに分割します。
 
 ---
@@ -33,4 +36,7 @@ excel-splitter split input.xlsx --max-rows 50000 -o out/
 ---
 
 ## License
+
 MIT License
+
+---
