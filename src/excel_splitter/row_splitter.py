@@ -1,9 +1,14 @@
 import os
 from copy import copy
 from openpyxl import Workbook, load_workbook
-from openpyxl.worksheet.worksheet import Worksheet
 
 from .utils import get_part_filename
+from .hyperlinks import (
+    extract_internal_link,
+    generate_external_link,
+    generate_part_external_link,
+    get_range_part_decision,
+)
 
 def copy_row_style(source_cell, target_cell):
     """
@@ -21,17 +26,17 @@ def copy_row_style(source_cell, target_cell):
             target_cell.border = copy(source_cell.border)
             target_cell.alignment = copy(source_cell.alignment)
             target_cell.number_format = source_cell.number_format
-        except:
-            # Fallback if copy fails
+        except Exception:
             pass
     
     # Copy hyperlink if present
     if source_cell.hyperlink:
         try:
             target_cell.hyperlink = copy(source_cell.hyperlink)
-        except Exception as e:
+        except Exception:
             # If hyperlink copy fails, log but don't crash
             pass
+
 
 def split_sheet_by_rows(
     origin_wb_path: str,
@@ -39,6 +44,7 @@ def split_sheet_by_rows(
     output_dir: str,
     max_rows: int,
     base_name: str,
+    split_map: dict[str, int],
     verbose: bool = False
 ) -> list[str]:
     """
@@ -63,6 +69,7 @@ def split_sheet_by_rows(
     # Logic: "Split if data rows > max_rows"
     data_rows_count = total_rows - 1
     if data_rows_count <= max_rows:
+        wb_source.close()
         return [] # No split happened here. Caller handles "Single file" case.
         
     generated_files = []
@@ -98,6 +105,31 @@ def split_sheet_by_rows(
             for col_idx, cell in enumerate(row, 1):
                 new_cell = new_ws.cell(row=row_write_idx, column=col_idx, value=cell.value)
                 copy_row_style(cell, new_cell)
+
+                # Rewrite internal links that point to a different part of the same sheet,
+                # or to other sheets (if still internal for some reason).
+                if cell.hyperlink:
+                    link = extract_internal_link(cell.hyperlink)
+                    if link:
+                        if link.sheet_name == sheet_name:
+                            target_part, ref_for_link, spans_parts = get_range_part_decision(link, max_rows)
+                            if target_part != part_num or spans_parts:
+                                # Always externalize when range spans parts.
+                                new_target = generate_part_external_link(base_name, sheet_name, ref_for_link, target_part)
+                                new_cell.hyperlink = new_target
+                                if verbose and spans_parts:
+                                    print(f"  [Link Rewrite] Range spans parts at {cell.coordinate}: {link.ref} -> {ref_for_link}")
+                        else:
+                            # Link to another sheet: ensure external link and handle its parts if split
+                            target_max_rows = split_map.get(link.sheet_name, 0)
+                            if target_max_rows > 0:
+                                target_part, ref_for_link, spans_parts = get_range_part_decision(link, target_max_rows)
+                                new_target = generate_part_external_link(base_name, link.sheet_name, ref_for_link, target_part)
+                                if verbose and spans_parts:
+                                    print(f"  [Link Rewrite] Range spans parts at {cell.coordinate}: {link.ref} -> {ref_for_link}")
+                            else:
+                                new_target = generate_external_link(base_name, link.sheet_name, link.ref)
+                            new_cell.hyperlink = new_target
             row_write_idx += 1
             
         # Save

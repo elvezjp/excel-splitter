@@ -46,12 +46,13 @@ def test_cli_with_max_rows(setup_test_files):
 def test_cli_dry_run(setup_test_files):
     """Test CLI --dry-run flag"""
     runner = CliRunner()
-    result = runner.invoke(main, [TEST_INPUT, "-o", TEST_OUTPUT_DIR, "--dry-run"])
-    
+    dry_run_dir = TEST_OUTPUT_DIR + "_dryrun"
+    result = runner.invoke(main, [TEST_INPUT, "-o", dry_run_dir, "--dry-run"])
+
     assert result.exit_code == 0
     assert "[Dry Run]" in result.output
-    # Files should NOT be created
-    assert not os.path.exists(TEST_OUTPUT_DIR)
+    # Directory should NOT be created by dry-run
+    assert not os.path.exists(dry_run_dir)
 
 
 def test_cli_verbose(setup_test_files):
@@ -179,7 +180,7 @@ def test_hyperlink_rewriting(setup_test_files):
     assert link_b2 is not None, "Cell B2 should have a hyperlink"
     
     target = link_b2.target
-    assert "external:" in target, "Link should be rewritten to external format"
+    assert "./" in target, "Link should be a relative external path"
     assert "complex_test__SHEET__Sales_2024.xlsx" in target, "Link should reference correct file"
     
     wb_index.close()
