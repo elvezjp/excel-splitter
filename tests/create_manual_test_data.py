@@ -41,14 +41,14 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
     ws_index["B5"] = "PART1 に含まれる"
 
     # 大量データシートへのリンク（中盤 - 分割後はPART2）
-    ws_index["A6"] = "大量データ 80行目"
-    ws_index["A6"].hyperlink = "#大量データ!A80"
+    ws_index["A6"] = "大量データ 50行目"
+    ws_index["A6"].hyperlink = "#大量データ!A50"
     ws_index["A6"].font = Font(color="0000FF", underline="single")
     ws_index["B6"] = "PART2 に含まれる（--max-rows 50 の場合）"
 
     # 大量データシートへのリンク（終盤 - 分割後はPART3）
-    ws_index["A7"] = "大量データ 130行目"
-    ws_index["A7"].hyperlink = "#大量データ!A130"
+    ws_index["A7"] = "大量データ 80行目"
+    ws_index["A7"].hyperlink = "#大量データ!A80"
     ws_index["A7"].font = Font(color="0000FF", underline="single")
     ws_index["B7"] = "PART3 に含まれる（--max-rows 50 の場合）"
 
@@ -176,7 +176,7 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
     current_row = 1
 
     # -----------------------
-    # テーブル1: 売上データ（50行）- PART1に含まれる
+    # テーブル1: 売上データ（30行）- PART1に含まれる
     # -----------------------
     ws_large.cell(row=current_row, column=1, value="【テーブル1】売上データ")
     ws_large.cell(row=current_row, column=1).font = Font(bold=True, size=12)
@@ -191,9 +191,9 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
         cell.border = thin_border
     current_row += 1
 
-    # データ行（48行）
+    # データ行（28行）
     products = ["商品A", "商品B", "商品C", "商品D"]
-    for i in range(1, 49):
+    for i in range(1, 29):
         row = current_row
         ws_large.cell(row=row, column=1, value=f"S{i:03d}").border = thin_border
         ws_large.cell(row=row, column=2, value=products[i % 4]).border = thin_border
@@ -206,16 +206,16 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
 
         current_row += 1
 
-    # テーブル1内リンク（80行目へ → テーブル2に飛ぶ）
-    ws_large.cell(row=10, column=5, value="80行目へ")
-    ws_large.cell(row=10, column=5).hyperlink = "#大量データ!A80"
+    # テーブル1内リンク（50行目へ → テーブル2に飛ぶ）
+    ws_large.cell(row=10, column=5, value="50行目へ")
+    ws_large.cell(row=10, column=5).hyperlink = "#大量データ!A50"
     ws_large.cell(row=10, column=5).font = Font(color="0000FF", underline="single")
 
     # 空白行
     current_row += 2
 
     # -----------------------
-    # テーブル2: 在庫データ（50行）- PART2に含まれる
+    # テーブル2: 在庫データ（30行）- PART2に含まれる
     # -----------------------
     table2_start = current_row
     ws_large.cell(row=current_row, column=1, value="【テーブル2】在庫データ")
@@ -231,9 +231,9 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
         cell.border = thin_border
     current_row += 1
 
-    # データ行（48行）
+    # データ行（28行）
     warehouses = ["東京", "大阪", "名古屋", "福岡"]
-    for i in range(1, 49):
+    for i in range(1, 29):
         row = current_row
         ws_large.cell(row=row, column=1, value=f"Z{i:03d}").border = thin_border
         ws_large.cell(row=row, column=2, value=warehouses[i % 4]).border = thin_border
@@ -247,20 +247,20 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
         current_row += 1
 
     # テーブル2内リンク（10行目へ戻る → テーブル1に飛ぶ）
-    ws_large.cell(row=80, column=5, value="10行目へ")
-    ws_large.cell(row=80, column=5).hyperlink = "#大量データ!A10"
-    ws_large.cell(row=80, column=5).font = Font(color="0000FF", underline="single")
+    ws_large.cell(row=50, column=5, value="10行目へ")
+    ws_large.cell(row=50, column=5).hyperlink = "#大量データ!A10"
+    ws_large.cell(row=50, column=5).font = Font(color="0000FF", underline="single")
 
-    # テーブル2内リンク（130行目へ → テーブル3に飛ぶ）
-    ws_large.cell(row=81, column=5, value="130行目へ")
-    ws_large.cell(row=81, column=5).hyperlink = "#大量データ!A130"
-    ws_large.cell(row=81, column=5).font = Font(color="0000FF", underline="single")
+    # テーブル2内リンク（80行目へ → テーブル3に飛ぶ）
+    ws_large.cell(row=51, column=5, value="80行目へ")
+    ws_large.cell(row=51, column=5).hyperlink = "#大量データ!A80"
+    ws_large.cell(row=51, column=5).font = Font(color="0000FF", underline="single")
 
     # 空白行
     current_row += 2
 
     # -----------------------
-    # テーブル3: 顧客データ（50行）- PART3に含まれる
+    # テーブル3: 顧客データ（30行）- PART3に含まれる
     # -----------------------
     table3_start = current_row
     ws_large.cell(row=current_row, column=1, value="【テーブル3】顧客データ")
@@ -276,10 +276,10 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
         cell.border = thin_border
     current_row += 1
 
-    # データ行（48行）
+    # データ行（28行）
     regions = ["関東", "関西", "中部", "九州"]
     ranks = ["ゴールド", "シルバー", "ブロンズ", "一般"]
-    for i in range(1, 49):
+    for i in range(1, 29):
         row = current_row
         ws_large.cell(row=row, column=1, value=f"C{i:03d}").border = thin_border
         ws_large.cell(row=row, column=2, value=f"顧客{i:03d}").border = thin_border
@@ -293,9 +293,9 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
         current_row += 1
 
     # テーブル3内リンク（目次へ戻る）
-    ws_large.cell(row=130, column=5, value="目次へ戻る")
-    ws_large.cell(row=130, column=5).hyperlink = "#目次!A1"
-    ws_large.cell(row=130, column=5).font = Font(color="0000FF", underline="single")
+    ws_large.cell(row=80, column=5, value="目次へ戻る")
+    ws_large.cell(row=80, column=5).hyperlink = "#目次!A1"
+    ws_large.cell(row=80, column=5).font = Font(color="0000FF", underline="single")
 
     # 列幅設定
     ws_large.column_dimensions["A"].width = 12
@@ -311,7 +311,7 @@ def create_manual_test_file(filename: str | Path = DEFAULT_OUTPUT):
     print("ファイル構成:")
     print("  - 目次: 他シートへのリンク")
     print("  - スタイル確認: フォント、背景色、罫線、結合セル、列幅/行高のサンプル")
-    print("  - 大量データ: 3つのテーブル（売上/在庫/顧客）を含む")
+    print("  - 大量データ: 3つのテーブル（売上/在庫/顧客、各30行）を含む")
     print("                --max-rows 50 で3つのPARTに分割される")
 
 

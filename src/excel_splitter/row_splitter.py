@@ -20,6 +20,16 @@ def is_blank_row(ws, row_num: int) -> bool:
     return True
 
 
+def is_all_blank_rows(ws, start_row: int, end_row: int) -> bool:
+    """
+    Check if all rows in the range [start_row, end_row] are blank.
+    """
+    for row_num in range(start_row, end_row + 1):
+        if not is_blank_row(ws, row_num):
+            return False
+    return True
+
+
 def find_split_point(ws, start_row: int, max_end_row: int, total_rows: int) -> int:
     """
     Find the best split point within the range [start_row, max_end_row].
@@ -110,16 +120,23 @@ def split_sheet_by_rows(
     part_num = 1
     
     while current_row <= total_rows:
-        if verbose:
-            print(f"  Creating Part {part_num} for {sheet_name} (Row {current_row}...)")
-            
-        new_wb = Workbook()
-        new_ws = new_wb.active
-        new_ws.title = sheet_name
-        
         # Find split point (prefer blank row, fallback to max_rows)
         max_end_row = min(current_row + max_rows - 1, total_rows)
         end_row = find_split_point(ws_source, current_row, max_end_row, total_rows)
+
+        # Skip if all rows in this range are blank
+        if is_all_blank_rows(ws_source, current_row, end_row):
+            if verbose:
+                print(f"  Skipping blank rows {current_row}-{end_row} for {sheet_name}")
+            current_row = end_row + 1
+            continue
+
+        if verbose:
+            print(f"  Creating Part {part_num} for {sheet_name} (Row {current_row}-{end_row})")
+
+        new_wb = Workbook()
+        new_ws = new_wb.active
+        new_ws.title = sheet_name
 
         row_write_idx = 1
         for row in ws_source.iter_rows(min_row=current_row, max_row=end_row, values_only=False):
