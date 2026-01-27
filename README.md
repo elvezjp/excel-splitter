@@ -1,50 +1,51 @@
 # excel-splitter
 
-Excel ファイルを分割するための Python CLI ツールです。
+[English](./README.md) | [日本語](./README_ja.md)
 
-- 複数シートを **1ファイル1シート** に分割
-- 必要に応じて **巨大な1シートを複数ファイルに分割**
-- セルの **シート間ハイパーリンクを壊さず** に外部リンクへ変換
+[![Elvez](https://img.shields.io/badge/Elvez-Product-3F61A7?style=flat-square)](https://elvez.co.jp/)
+[![IXV Ecosystem](https://img.shields.io/badge/IXV-Ecosystem-3F61A7?style=flat-square)](https://elvez.co.jp/ixv/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Stars](https://img.shields.io/github/stars/elvezjp/excel-splitter?style=social)](https://github.com/elvezjp/excel-splitter/stargazers)
 
-業務でよくある「巨大 Excel を安全に分割したい」というニーズに対応します。
+A Python CLI tool for splitting Excel files. Splits multiple sheets into individual files and automatically converts inter-sheet hyperlinks to external file links.
 
----
+## Use Cases
 
-## 主な機能
+- **Splitting Large Excel Files**: Split large Excel files by sheet or by row count
+- **Efficient File Sharing**: Extract and share only the sheets you need
+- **Data Migration**: Split Excel files when migrating data between systems
+- **Backup**: Save each sheet as an individual file
 
-### 1. Workbook Split
+## Background
 
-1つの Excel（複数シート）を、シートごとに 1 ファイルずつに分割します。
-元ファイルの書式を維持するため「Delete Other Sheets」方式を採用しています。
+This tool was created as a small utility during the development of **IXV (Ixiv)**, a development support AI for Japanese development documents and specifications.
 
-- 出力ファイル名: `{元ファイル名}__SHEET__{シート名}.xlsx`
+IXV addresses the challenges of understanding, structuring, and utilizing Japanese documents in system development. This repository publishes a portion of that work.
 
-### 2. Hyperlink Rewrite
+## Features
 
-ブック内リンク（`#OtherSheet!A1`）を、分割後も有効な外部ファイルリンクに変換します。
+- **Sheet Splitting**: Split Excel files with multiple sheets into one file per sheet
+- **Row Splitting**: Split large sheets into multiple files using the `--max-rows` option
+- **Hyperlink Preservation**: Automatically converts inter-sheet links to external file links after splitting
+- **Format Preservation**: Maintains original styles and formatting as much as possible using the "delete other sheets" method
+- **Dry Run**: Preview split results without actually writing files using `--dry-run`
 
-- 絶対参照（`$A$1`）・範囲参照（`A1:B10`）にも対応
-- 範囲が複数 Part にまたがる場合は開始セルに縮退
+## Documentation
 
-### 3. Sheet Split（オプション）
+- [CHANGELOG.md](CHANGELOG.md) - Version history
+- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
+- [SECURITY.md](SECURITY.md) - Security policy
+- [docs/Spec.md](docs/Spec.md) - Technical specification
 
-`--max-rows` 指定時、巨大なシートを行数基準で複数ファイルに分割します。
+## Setup
 
-- ヘッダー（1行目）は全 Part にコピーされます
-- セルのスタイル（フォント・塗り・罫線・配置・表示形式）を維持
-- 出力ファイル名: `{元ファイル名}__SHEET__{シート名}_PART{N}.xlsx`
+### Requirements
 
----
+- Python 3.10 or higher
+- [uv](https://docs.astral.sh/uv/) package manager
 
-## 動作環境
-
-- Python 3.10+
-- [uv](https://docs.astral.sh/uv/) (パッケージマネージャー)
-- 依存ライブラリ: `openpyxl`, `click`
-
-## インストール
-
-### uv のインストール
+### Installing uv
 
 ```bash
 # macOS / Linux
@@ -54,70 +55,142 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### 依存ライブラリのインストール
+### Installing Dependencies
 
 ```bash
+git clone https://github.com/elvezjp/excel-splitter.git
+cd excel-splitter
 uv sync
 ```
 
----
+## Usage
 
-## 使い方
-
-```
+```bash
 uv run excel-splitter [OPTIONS] INPUT_FILE
 ```
 
-### 引数・オプション
-
-| 引数/オプション | 必須 | デフォルト | 説明 |
-|:---|:---:|:---:|:---|
-| `INPUT_FILE` | Yes | - | 分割対象の `.xlsx` ファイルパス |
-| `-o`, `--output-dir` | No | `./dist` | 出力先ディレクトリ（存在しない場合は自動作成） |
-| `--max-rows` | No | `0`（無効） | 1シートの最大データ行数（ヘッダー除外）。超過時に Part 分割 |
-| `--dry-run` | No | `False` | 実際の書き込みを行わず、分割予定を表示 |
-| `--verbose` | No | `False` | 詳細なログ出力を有効化 |
-
-### 実行例
+### Basic Example
 
 ```bash
-# 基本: シートごとに分割（出力先: ./dist）
+# Split by sheet (output to: ./dist)
 uv run excel-splitter input.xlsx
+```
 
-# 出力先ディレクトリを指定
+### More Examples
+
+```bash
+# Specify output directory
 uv run excel-splitter input.xlsx -o output/
 
-# 行数制限付き分割（1シートあたり最大 50000 データ行）
+# Split with row limit (max 50000 data rows per sheet)
 uv run excel-splitter input.xlsx --max-rows 50000 -o output/
 
-# ドライラン（ファイルを生成せずに分割結果をプレビュー）
+# Dry run (preview split results without creating files)
 uv run excel-splitter input.xlsx --dry-run
 
-# 詳細ログ付き実行
+# Run with verbose logging
 uv run excel-splitter input.xlsx --verbose -o output/
 ```
 
----
+### Try with Sample File
 
-## 開発
-
-### テストの実行
+A sample Excel file is provided for testing. This file contains multiple sheets, styles, and hyperlinks, allowing you to verify all major features.
 
 ```bash
-uv sync --extra dev
-uv run pytest tests/ -v
+uv run excel-splitter tests/fixtures/manual_test.xlsx -o dist --max-rows 50
 ```
 
----
+## Main Options
 
-## 制約事項
+| Option | Default | Description |
+|:---|:---:|:---|
+| `INPUT_FILE` | - | Path to the `.xlsx` file to split (required) |
+| `-o`, `--output-dir` | `./dist` | Output directory (created automatically if it doesn't exist) |
+| `--max-rows` | `0` (disabled) | Maximum data rows per sheet (excluding header). Splits into parts when exceeded |
+| `--dry-run` | `False` | Display split plan without actually writing files |
+| `--verbose` | `False` | Enable detailed log output |
 
-- `.xlsx` 形式のみ対応（`.xlsm` マクロ付きファイルは非対応）
-- Excel の数式内シート参照（例: `=SUM(Sheet2!A1:A10)`）の書き換えは対象外（ハイパーリンクのみ）
-- 条件付き書式の完全な維持は保証外
+## Output Examples
 
----
+### Sheet Splitting
+
+Input: `report.xlsx` (containing Sheet1, Sheet2, Sheet3)
+
+```
+dist/
+├── report__SHEET__Sheet1.xlsx
+├── report__SHEET__Sheet2.xlsx
+└── report__SHEET__Sheet3.xlsx
+```
+
+### Row Splitting (with --max-rows)
+
+Input: `large_data.xlsx` (Data sheet with 100,000 rows)
+
+```bash
+uv run excel-splitter large_data.xlsx --max-rows 50000
+```
+
+```
+dist/
+├── large_data__SHEET__Data_PART1.xlsx  # Rows 1-50000
+└── large_data__SHEET__Data_PART2.xlsx  # Rows 50001-100000
+```
+
+## Directory Structure
+
+```
+excel-splitter/
+├── src/
+│   └── excel_splitter/
+│       ├── __init__.py
+│       ├── cli.py           # CLI entry point
+│       ├── splitter.py      # Workbook splitting
+│       ├── row_splitter.py  # Row-based splitting
+│       ├── hyperlinks.py    # Hyperlink processing
+│       └── utils.py         # Utilities
+├── tests/                   # Test code
+├── docs/                    # Documentation
+├── pyproject.toml
+├── README.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── SECURITY.md
+└── LICENSE
+```
+
+## Limitations
+
+- Only supports `.xlsx` format (`.xlsm` macro-enabled files are not supported)
+- Does not rewrite sheet references in Excel formulas (e.g., `=SUM(Sheet2!A1:A10)`) - only hyperlinks
+- Full preservation of conditional formatting is not guaranteed
+- Shapes and images may not be preserved
+
+## Security
+
+For security details, please see [SECURITY.md](SECURITY.md).
+
+- Input files should only be from trusted sources
+- Ensure appropriate write permissions for the output directory
+
+## Contributing
+
+Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+- Bug reports: [GitHub Issues](https://github.com/elvezjp/excel-splitter/issues)
+- Feature requests: [GitHub Issues](https://github.com/elvezjp/excel-splitter/issues)
+- Pull requests: [GitHub Pull Requests](https://github.com/elvezjp/excel-splitter/pulls)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## License
 
-MIT License
+MIT License - See [LICENSE](LICENSE) for details.
+
+## Contact
+
+- **GitHub Issues**: [https://github.com/elvezjp/excel-splitter/issues](https://github.com/elvezjp/excel-splitter/issues)
+- **Email**: info@elvez.co.jp
+- **Company**: Elvez Inc.
