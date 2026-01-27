@@ -126,38 +126,35 @@ def test_row_split_creates_parts(setup_test_files):
     assert os.path.exists(part3), "Part 3 should be created"
 
 
-def test_header_preservation_in_parts(setup_test_files):
-    """Test that headers are preserved in all parts"""
+def test_row_split_content(setup_test_files):
+    """Test that row split creates parts with correct row counts"""
     runner = CliRunner()
     result = runner.invoke(main, [TEST_INPUT, "-o", TEST_OUTPUT_DIR, "--max-rows", "50"])
-    
+
     assert result.exit_code == 0
-    
+
     part1 = os.path.join(TEST_OUTPUT_DIR, "complex_test__SHEET__Large_Data_PART1.xlsx")
     part2 = os.path.join(TEST_OUTPUT_DIR, "complex_test__SHEET__Large_Data_PART2.xlsx")
     part3 = os.path.join(TEST_OUTPUT_DIR, "complex_test__SHEET__Large_Data_PART3.xlsx")
-    
-    # Check Part 1
+
+    # Part 1: rows 1-50
     wb_p1 = load_workbook(part1)
     ws_p1 = wb_p1.active
-    assert ws_p1["A1"].value == "ID", "Header should be in Part 1"
-    assert ws_p1["B1"].value == "Value", "Header should be in Part 1"
+    assert ws_p1.max_row == 50, "Part 1 should have 50 rows"
     wb_p1.close()
-    
-    # Check Part 2
+
+    # Part 2: rows 51-100
     wb_p2 = load_workbook(part2)
     ws_p2 = wb_p2.active
-    assert ws_p2["A1"].value == "ID", "Header should be preserved in Part 2"
-    assert ws_p2["B1"].value == "Value", "Header should be preserved in Part 2"
-    # Row 2 should contain data (originally row 52)
-    assert ws_p2["A2"].value is not None, "Part 2 should have data rows"
+    assert ws_p2["A1"].value is not None, "Part 2 should have data"
+    assert ws_p2.max_row == 50, "Part 2 should have 50 rows"
     wb_p2.close()
-    
-    # Check Part 3
+
+    # Part 3: rows 101-121 (21 rows)
     wb_p3 = load_workbook(part3)
     ws_p3 = wb_p3.active
-    assert ws_p3["A1"].value == "ID", "Header should be preserved in Part 3"
-    assert ws_p3["B1"].value == "Value", "Header should be preserved in Part 3"
+    assert ws_p3["A1"].value is not None, "Part 3 should have data"
+    assert ws_p3.max_row == 21, "Part 3 should have 21 rows"
     wb_p3.close()
 
 
