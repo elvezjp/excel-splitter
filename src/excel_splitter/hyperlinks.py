@@ -115,12 +115,11 @@ def generate_part_external_link(base_name: str, target_sheet: str, ref: str, par
 
 def get_part_number_for_row(row: int, max_rows: int) -> int:
     """
-    Convert an absolute row to part number based on max_rows and header row.
+    Convert an absolute row to part number based on max_rows.
     """
-    if row <= 1:
+    if row < 1:
         return 1
-    data_index = row - 1
-    return ((data_index - 1) // max_rows) + 1
+    return ((row - 1) // max_rows) + 1
 
 def get_range_part_decision(link: InternalLink, max_rows: int) -> tuple[int, str, bool]:
     """

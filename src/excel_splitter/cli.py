@@ -11,7 +11,7 @@ from .utils import get_sheet_filename, get_part_filename
 @click.command()
 @click.argument('input_file', type=click.Path(exists=True, dir_okay=False))
 @click.option('-o', '--output-dir', default='./dist', help='Directory to save split files.', type=click.Path())
-@click.option('--max-rows', default=0, help='Maximum rows per sheet (exclude header). Splits into parts if exceeded.', type=int)
+@click.option('--max-rows', default=0, help='Maximum rows per sheet. Splits into parts if exceeded.', type=int)
 @click.option('--dry-run', is_flag=True, help='Simulate split without writing files.')
 @click.option('--verbose', is_flag=True, help='Enable verbose output.')
 def main(input_file, output_dir, max_rows, dry_run, verbose):
@@ -55,10 +55,10 @@ def main(input_file, output_dir, max_rows, dry_run, verbose):
                 wb = load_workbook(input_file, read_only=True)
                 for sheet in wb.sheetnames:
                     ws = wb[sheet]
-                    data_rows = max(ws.max_row - 1, 0)
-                    if max_rows > 0 and data_rows > max_rows:
-                        parts = (data_rows + max_rows - 1) // max_rows
-                        click.echo(f"- Would split sheet: {sheet} ({data_rows} data rows) -> {parts} parts")
+                    total_rows = ws.max_row
+                    if max_rows > 0 and total_rows > max_rows:
+                        parts = (total_rows + max_rows - 1) // max_rows
+                        click.echo(f"- Would split sheet: {sheet} ({total_rows} rows) -> {parts} parts")
                         for part_num in range(1, parts + 1):
                             filename = get_part_filename(base_name, sheet, part_num)
                             click.echo(f"  - {filename}")
