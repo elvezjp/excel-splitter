@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 
 from .splitter import split_workbook_by_sheet
 from .hyperlinks import rewrite_hyperlinks_in_workbook
-from .row_splitter import split_sheet_by_rows
+from .row_splitter import split_sheet_by_rows, compute_all_boundaries
 from .utils import get_sheet_filename, get_part_filename
 
 @click.command()
@@ -96,18 +96,21 @@ def main(input_file, output_dir, max_rows, dry_run, verbose):
             click.echo(f"Error: Phase 1 failed (Workbook Split): {e}", err=True)
             sys.exit(1)
         
-        # Analyze which sheets will be split into parts
+        # Pre-compute boundaries for sheets that need row splitting
+        # split_map: {sheet_name: [(start_row, end_row), ...]}
         split_map = {}
         try:
-            wb_meta = load_workbook(input_file, read_only=True)
+            # Need data_only=False for compute_all_boundaries to work correctly
+            wb_meta = load_workbook(input_file, read_only=False, data_only=False)
             for sheet in wb_meta.sheetnames:
                 ws = wb_meta[sheet]
-                last_row = 0
-                for idx, row in enumerate(ws.iter_rows(values_only=True), 1):
-                    if any(cell is not None for cell in row):
-                        last_row = idx
-                if max_rows > 0 and last_row > max_rows:
-                    split_map[sheet] = max_rows
+                total_rows = ws.max_row
+                if max_rows > 0 and total_rows > max_rows:
+                    boundaries = compute_all_boundaries(ws, max_rows, total_rows)
+                    if len(boundaries) > 1:
+                        split_map[sheet] = boundaries
+                        if verbose:
+                            click.echo(f"  Pre-computed {len(boundaries)} parts for '{sheet}'")
             wb_meta.close()
         except Exception as e:
             click.echo(f"Error: Failed to analyze workbook for row splitting: {e}", err=True)
@@ -125,14 +128,14 @@ def main(input_file, output_dir, max_rows, dry_run, verbose):
                 if perform_row_split:
                     if verbose:
                         click.echo(f"  [Row Split] Sheet '{sheet_name}' exceeds {max_rows} rows. Splitting...")
-                    
-                    # Produce parts
+
+                    # Produce parts (returns tuple of (file_paths, boundaries))
                     try:
-                        part_files = split_sheet_by_rows(file_path, sheet_name, output_dir, max_rows, base_name, split_map, verbose)
+                        part_files, _ = split_sheet_by_rows(file_path, sheet_name, output_dir, max_rows, base_name, split_map, verbose)
                     except Exception as e:
                         click.echo(f"Error: Phase 3 failed (Row Split) for sheet '{sheet_name}': {e}", err=True)
                         sys.exit(1)
-                    
+
                     if part_files:
                         # Delete the whole sheet file to avoid duplication
                         try:

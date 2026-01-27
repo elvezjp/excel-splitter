@@ -7,7 +7,8 @@ from .hyperlinks import (
     extract_internal_link,
     generate_external_link,
     generate_part_external_link,
-    get_range_part_decision,
+    get_range_part_decision_from_boundaries,
+    get_part_number_from_boundaries,
 )
 
 def is_blank_row(ws, row_num: int) -> bool:
@@ -28,6 +29,28 @@ def is_all_blank_rows(ws, start_row: int, end_row: int) -> bool:
         if not is_blank_row(ws, row_num):
             return False
     return True
+
+
+def compute_all_boundaries(ws, max_rows: int, total_rows: int) -> list[tuple[int, int]]:
+    """
+    Pre-compute all part boundaries for a sheet.
+    Returns list of (start_row, end_row) tuples for each part.
+    Skips entirely blank ranges.
+    """
+    boundaries = []
+    current_row = 1
+
+    while current_row <= total_rows:
+        max_end_row = min(current_row + max_rows - 1, total_rows)
+        end_row = find_split_point(ws, current_row, max_end_row, total_rows)
+
+        # Skip if all rows in this range are blank
+        if not is_all_blank_rows(ws, current_row, end_row):
+            boundaries.append((current_row, end_row))
+
+        current_row = end_row + 1
+
+    return boundaries
 
 
 def find_split_point(ws, start_row: int, max_end_row: int, total_rows: int) -> int:
@@ -92,12 +115,13 @@ def split_sheet_by_rows(
     output_dir: str,
     max_rows: int,
     base_name: str,
-    split_map: dict[str, int],
+    split_map: dict[str, list[tuple[int, int]]],
     verbose: bool = False
-) -> list[str]:
+) -> tuple[list[str], list[tuple[int, int]]]:
     """
     Split a specific sheet into multiple files based on max_rows.
-    Returns list of generated file paths.
+    Returns tuple of (list of generated file paths, list of part boundaries).
+    Each boundary is (start_row, end_row) tuple.
     """
     
     # Load source. Read-only might be faster for reading, 
@@ -111,26 +135,14 @@ def split_sheet_by_rows(
     # If total_rows <= max_rows, no split needed
     if total_rows <= max_rows:
         wb_source.close()
-        return [] # No split happened here. Caller handles "Single file" case.
-        
+        return [], [] # No split happened here. Caller handles "Single file" case.
+
+    # Pre-compute all part boundaries for this sheet
+    part_boundaries = compute_all_boundaries(ws_source, max_rows, total_rows)
+
     generated_files = []
-    
-    # Chunking - data starts at row 1
-    current_row = 1
-    part_num = 1
-    
-    while current_row <= total_rows:
-        # Find split point (prefer blank row, fallback to max_rows)
-        max_end_row = min(current_row + max_rows - 1, total_rows)
-        end_row = find_split_point(ws_source, current_row, max_end_row, total_rows)
 
-        # Skip if all rows in this range are blank
-        if is_all_blank_rows(ws_source, current_row, end_row):
-            if verbose:
-                print(f"  Skipping blank rows {current_row}-{end_row} for {sheet_name}")
-            current_row = end_row + 1
-            continue
-
+    for part_num, (current_row, end_row) in enumerate(part_boundaries, 1):
         if verbose:
             print(f"  Creating Part {part_num} for {sheet_name} (Row {current_row}-{end_row})")
 
@@ -145,23 +157,23 @@ def split_sheet_by_rows(
                 copy_row_style(cell, new_cell)
 
                 # Rewrite internal links that point to a different part of the same sheet,
-                # or to other sheets (if still internal for some reason).
+                # or to other sheets.
                 if cell.hyperlink:
                     link = extract_internal_link(cell.hyperlink)
                     if link:
                         if link.sheet_name == sheet_name:
-                            target_part, ref_for_link, spans_parts = get_range_part_decision(link, max_rows)
+                            # Same sheet: use pre-computed boundaries
+                            target_part, ref_for_link, spans_parts = get_range_part_decision_from_boundaries(link, part_boundaries)
                             if target_part != part_num or spans_parts:
-                                # Always externalize when range spans parts.
                                 new_target = generate_part_external_link(base_name, sheet_name, ref_for_link, target_part)
                                 new_cell.hyperlink = new_target
                                 if verbose and spans_parts:
                                     print(f"  [Link Rewrite] Range spans parts at {cell.coordinate}: {link.ref} -> {ref_for_link}")
                         else:
-                            # Link to another sheet: ensure external link and handle its parts if split
-                            target_max_rows = split_map.get(link.sheet_name, 0)
-                            if target_max_rows > 0:
-                                target_part, ref_for_link, spans_parts = get_range_part_decision(link, target_max_rows)
+                            # Link to another sheet: use split_map boundaries
+                            target_boundaries = split_map.get(link.sheet_name, [])
+                            if target_boundaries:
+                                target_part, ref_for_link, spans_parts = get_range_part_decision_from_boundaries(link, target_boundaries)
                                 new_target = generate_part_external_link(base_name, link.sheet_name, ref_for_link, target_part)
                                 if verbose and spans_parts:
                                     print(f"  [Link Rewrite] Range spans parts at {cell.coordinate}: {link.ref} -> {ref_for_link}")
@@ -175,11 +187,8 @@ def split_sheet_by_rows(
         out_path = os.path.join(output_dir, filename)
         new_wb.save(out_path)
         new_wb.close()
-        
+
         generated_files.append(out_path)
-        
-        current_row = end_row + 1
-        part_num += 1
-        
+
     wb_source.close()
-    return generated_files
+    return generated_files, part_boundaries

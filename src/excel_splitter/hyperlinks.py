@@ -113,20 +113,34 @@ def generate_part_external_link(base_name: str, target_sheet: str, ref: str, par
     sheet_ref = quote_sheet_name(target_sheet)
     return f"./{part_filename}#{sheet_ref}!{ref}"
 
-def get_part_number_for_row(row: int, max_rows: int) -> int:
-    """
-    Convert an absolute row to part number based on max_rows.
-    """
-    if row < 1:
-        return 1
-    return ((row - 1) // max_rows) + 1
 
-def get_range_part_decision(link: InternalLink, max_rows: int) -> tuple[int, str, bool]:
+def get_part_number_from_boundaries(row: int, boundaries: list[tuple[int, int]]) -> int:
     """
-    Return (target_part, ref_for_link, spans_parts)
+    Find which part contains the given row based on actual part boundaries.
+    Returns 1-indexed part number.
+    If row is not in any boundary (e.g., in a skipped blank range),
+    returns the next available part or the last part.
     """
-    start_part = get_part_number_for_row(link.start_row, max_rows)
-    end_part = get_part_number_for_row(link.end_row, max_rows)
+    for i, (start_row, end_row) in enumerate(boundaries, 1):
+        if start_row <= row <= end_row:
+            return i
+    # Row not in any part - find the closest part
+    # This can happen if the row falls in a skipped blank region
+    for i, (start_row, end_row) in enumerate(boundaries, 1):
+        if row < start_row:
+            return i  # Return the next part after the gap
+    # Row is beyond all parts, return the last part
+    return len(boundaries) if boundaries else 1
+
+
+def get_range_part_decision_from_boundaries(
+    link: InternalLink, boundaries: list[tuple[int, int]]
+) -> tuple[int, str, bool]:
+    """
+    Return (target_part, ref_for_link, spans_parts) using actual part boundaries.
+    """
+    start_part = get_part_number_from_boundaries(link.start_row, boundaries)
+    end_part = get_part_number_from_boundaries(link.end_row, boundaries)
     if start_part == end_part:
         return start_part, link.ref, False
     # Span across parts: link to top-left cell only (recommended safe fallback).
@@ -137,22 +151,16 @@ def rewrite_hyperlinks_in_workbook(
     wb: Workbook,
     base_name: str,
     current_sheet_name: str,
-    split_map: dict[str, int],
+    split_map: dict[str, list[tuple[int, int]]],
     verbose: bool = False,
 ):
     """
     Iterate through all hyperlinks in the given single-sheet workbook and rewrite internal links.
+    split_map contains {sheet_name: [(start_row, end_row), ...]} for split sheets.
     """
     ws = wb[current_sheet_name]
-    
-    # Access private attribute _hyperlinks as public property seems missing in openpyxl 3.1.5
-    # Also, it seems sometimes the collection is not populated even if cells have links.
-    # To be robust, we will iterate over used cells.
-    
+
     # Strategy: iterate used range.
-    has_rewritten = False
-    
-    # We can iterate iter_rows()
     for row in ws.iter_rows():
         for cell in row:
             if cell.hyperlink:
@@ -162,9 +170,9 @@ def rewrite_hyperlinks_in_workbook(
 
                 link = extract_internal_link(cell.hyperlink)
                 if link and link.sheet_name != current_sheet_name:
-                    target_max_rows = split_map.get(link.sheet_name, 0)
-                    if target_max_rows > 0:
-                        part_num, ref_for_link, spans_parts = get_range_part_decision(link, target_max_rows)
+                    boundaries = split_map.get(link.sheet_name, [])
+                    if boundaries:
+                        part_num, ref_for_link, spans_parts = get_range_part_decision_from_boundaries(link, boundaries)
                         new_target = generate_part_external_link(base_name, link.sheet_name, ref_for_link, part_num)
                         if verbose:
                             note = " (range spans parts)" if spans_parts else ""
@@ -175,6 +183,3 @@ def rewrite_hyperlinks_in_workbook(
                             print(f"  [Link Rewrite] {cell.coordinate}: {raw_target} -> {new_target}")
                     cell.hyperlink.target = new_target
                     cell.hyperlink.location = None
-                    has_rewritten = True
-    
-    # Note: modifying cell.hyperlink.target is sufficient for openpyxl to save it correctly.
