@@ -92,6 +92,14 @@ uv run excel-splitter input.xlsx --dry-run
 uv run excel-splitter input.xlsx --verbose -o output/
 ```
 
+### Try with Sample File
+
+A sample Excel file is provided for testing. This file contains multiple sheets, styles, and hyperlinks, allowing you to verify all major features.
+
+```bash
+uv run excel-splitter tests/fixtures/manual_test.xlsx -o dist --max-rows 50
+```
+
 ## Main Options
 
 | Option | Default | Description |

@@ -92,6 +92,14 @@ uv run excel-splitter input.xlsx --dry-run
 uv run excel-splitter input.xlsx --verbose -o output/
 ```
 
+### サンプルファイルで試す
+
+動作確認用の Excel ファイルを用意しています。このファイルには複数シート、スタイル、ハイパーリンクが含まれており、主要機能を一通り確認できます。
+
+```bash
+uv run excel-splitter tests/fixtures/manual_test.xlsx -o dist --max-rows 50
+```
+
 ## 主要オプション
 
 | オプション | デフォルト | 説明 |
