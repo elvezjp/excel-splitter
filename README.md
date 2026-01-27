@@ -36,7 +36,7 @@ IXV addresses the challenges of understanding, structuring, and utilizing Japane
 - [CHANGELOG.md](CHANGELOG.md) - Version history
 - [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
 - [SECURITY.md](SECURITY.md) - Security policy
-- [docs/Spec.md](docs/Spec.md) - Technical specification
+- [spec.md](spec.md) - Technical specification
 
 ## Setup
 
@@ -156,6 +156,7 @@ excel-splitter/
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
+├── spec.md
 └── LICENSE
 ```
 
@@ -164,7 +165,9 @@ excel-splitter/
 - Only supports `.xlsx` format (`.xlsm` macro-enabled files are not supported)
 - Does not rewrite sheet references in Excel formulas (e.g., `=SUM(Sheet2!A1:A10)`) - only hyperlinks
 - Full preservation of conditional formatting is not guaranteed
-- Shapes and images may not be preserved
+- Shapes and images:
+  - Preserved in sheets without internal links (hyperlinks to other sheets) and no row splitting
+  - Lost in sheets where internal link rewriting or row splitting (`--max-rows`) occurs
 
 ## Security
 
