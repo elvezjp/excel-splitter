@@ -36,7 +36,7 @@ IXV addresses the challenges of understanding, structuring, and utilizing Japane
 - [CHANGELOG.md](CHANGELOG.md) - Version history
 - [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
 - [SECURITY.md](SECURITY.md) - Security policy
-- [docs/Spec.md](docs/Spec.md) - Technical specification
+- [spec.md](spec.md) - Technical specification
 
 ## Setup
 
@@ -156,6 +156,7 @@ excel-splitter/
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
+├── spec.md
 └── LICENSE
 ```
 
