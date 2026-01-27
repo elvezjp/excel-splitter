@@ -10,6 +10,44 @@ from .hyperlinks import (
     get_range_part_decision,
 )
 
+def is_blank_row(ws, row_num: int) -> bool:
+    """
+    Check if a row is blank (all cells have value None).
+    """
+    for cell in ws[row_num]:
+        if cell.value is not None:
+            return False
+    return True
+
+
+def find_split_point(ws, start_row: int, max_end_row: int, total_rows: int) -> int:
+    """
+    Find the best split point within the range [start_row, max_end_row].
+
+    Strategy:
+    1. Search for the last blank row in range (start_row, max_end_row]
+    2. If found, split before the blank row (return blank_row - 1)
+    3. If not found, use max_end_row as fallback
+
+    Note: We exclude start_row from blank row search to avoid infinite loops
+    when start_row itself is a blank row.
+    """
+    search_end = min(max_end_row, total_rows)
+
+    # Find the last blank row in range (excluding start_row)
+    last_blank_row = None
+    for row_num in range(start_row + 1, search_end + 1):
+        if is_blank_row(ws, row_num):
+            last_blank_row = row_num
+
+    if last_blank_row is not None:
+        # Split before the blank row
+        return last_blank_row - 1
+    else:
+        # Fallback: use search_end
+        return search_end
+
+
 def copy_row_style(source_cell, target_cell):
     """
     Copy basic style and hyperlink from source to target.
@@ -79,8 +117,9 @@ def split_sheet_by_rows(
         new_ws = new_wb.active
         new_ws.title = sheet_name
         
-        # Write Data Chunk
-        end_row = min(current_row + max_rows - 1, total_rows)
+        # Find split point (prefer blank row, fallback to max_rows)
+        max_end_row = min(current_row + max_rows - 1, total_rows)
+        end_row = find_split_point(ws_source, current_row, max_end_row, total_rows)
 
         row_write_idx = 1
         for row in ws_source.iter_rows(min_row=current_row, max_row=end_row, values_only=False):
