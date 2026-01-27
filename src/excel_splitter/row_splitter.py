@@ -57,26 +57,18 @@ def split_sheet_by_rows(
     wb_source = load_workbook(origin_wb_path, read_only=False, data_only=False)
     ws_source = wb_source[sheet_name]
     
-    # 1. Analyze Header
-    # Assuming Row 1 is header.
-    header_cells = list(ws_source[1]) # Tuple of cells in row 1
-    
-    # 2. Count rows
-    # ws.max_row includes empty rows often.
+    # Count rows
     total_rows = ws_source.max_row
-    
-    # If total_rows <= max_rows + 1 (header), no split needed? 
-    # Logic: "Split if data rows > max_rows"
-    data_rows_count = total_rows - 1
-    if data_rows_count <= max_rows:
+
+    # If total_rows <= max_rows, no split needed
+    if total_rows <= max_rows:
         wb_source.close()
         return [] # No split happened here. Caller handles "Single file" case.
         
     generated_files = []
     
-    # 3. Chunking
-    # data starts at row 2
-    current_row = 2
+    # Chunking - data starts at row 1
+    current_row = 1
     part_num = 1
     
     while current_row <= total_rows:
@@ -87,20 +79,10 @@ def split_sheet_by_rows(
         new_ws = new_wb.active
         new_ws.title = sheet_name
         
-        # A. Write Header
-        for col_idx, cell in enumerate(header_cells, 1):
-            new_cell = new_ws.cell(row=1, column=col_idx, value=cell.value)
-            copy_row_style(cell, new_cell)
-            
-        # B. Write Data Chunk
-        # Calculate end row for this chunk
+        # Write Data Chunk
         end_row = min(current_row + max_rows - 1, total_rows)
-        
-        # Iterate rows in source
-        # openpyxl slicing: ws[row_result]
-        # ws.iter_rows is generator
-        
-        row_write_idx = 2
+
+        row_write_idx = 1
         for row in ws_source.iter_rows(min_row=current_row, max_row=end_row, values_only=False):
             for col_idx, cell in enumerate(row, 1):
                 new_cell = new_ws.cell(row=row_write_idx, column=col_idx, value=cell.value)

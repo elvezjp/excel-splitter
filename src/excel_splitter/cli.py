@@ -106,8 +106,7 @@ def main(input_file, output_dir, max_rows, dry_run, verbose):
                 for idx, row in enumerate(ws.iter_rows(values_only=True), 1):
                     if any(cell is not None for cell in row):
                         last_row = idx
-                data_rows = max(last_row - 1, 0)
-                if max_rows > 0 and data_rows > max_rows:
+                if max_rows > 0 and last_row > max_rows:
                     split_map[sheet] = max_rows
             wb_meta.close()
         except Exception as e:
