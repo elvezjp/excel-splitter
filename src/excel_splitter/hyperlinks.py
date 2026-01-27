@@ -147,6 +147,27 @@ def get_range_part_decision_from_boundaries(
     start_ref = link.ref.split(":", 1)[0]
     return start_part, start_ref, True
 
+def has_internal_links(ws) -> bool:
+    """
+    ワークシートに内部リンク（他シートへのリンク）が含まれているかを確認する。
+
+    Args:
+        ws: openpyxl worksheet object
+
+    Returns:
+        True if the worksheet contains internal links to other sheets
+    """
+    current_sheet_name = ws.title
+
+    for row in ws.iter_rows():
+        for cell in row:
+            if cell.hyperlink:
+                link = extract_internal_link(cell.hyperlink)
+                if link and link.sheet_name != current_sheet_name:
+                    return True
+    return False
+
+
 def rewrite_hyperlinks_in_workbook(
     wb: Workbook,
     base_name: str,
