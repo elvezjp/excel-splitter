@@ -39,16 +39,25 @@ Excel ファイルを分割するための Python CLI ツールです。
 ## 動作環境
 
 - Python 3.10+
+- [uv](https://docs.astral.sh/uv/) (パッケージマネージャー)
 - 依存ライブラリ: `openpyxl`, `click`
 
 ## インストール
 
-```bash
-# Poetry を使う場合
-poetry install
+### uv のインストール
 
-# pip を使う場合
-pip install -e .
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### 依存ライブラリのインストール
+
+```bash
+uv sync
 ```
 
 ---
@@ -56,7 +65,7 @@ pip install -e .
 ## 使い方
 
 ```
-excel-splitter [OPTIONS] INPUT_FILE
+uv run excel-splitter [OPTIONS] INPUT_FILE
 ```
 
 ### 引数・オプション
@@ -73,19 +82,19 @@ excel-splitter [OPTIONS] INPUT_FILE
 
 ```bash
 # 基本: シートごとに分割（出力先: ./dist）
-excel-splitter input.xlsx
+uv run excel-splitter input.xlsx
 
 # 出力先ディレクトリを指定
-excel-splitter input.xlsx -o output/
+uv run excel-splitter input.xlsx -o output/
 
 # 行数制限付き分割（1シートあたり最大 50000 データ行）
-excel-splitter input.xlsx --max-rows 50000 -o output/
+uv run excel-splitter input.xlsx --max-rows 50000 -o output/
 
 # ドライラン（ファイルを生成せずに分割結果をプレビュー）
-excel-splitter input.xlsx --dry-run
+uv run excel-splitter input.xlsx --dry-run
 
 # 詳細ログ付き実行
-excel-splitter input.xlsx --verbose -o output/
+uv run excel-splitter input.xlsx --verbose -o output/
 ```
 
 ---
@@ -95,8 +104,8 @@ excel-splitter input.xlsx --verbose -o output/
 ### テストの実行
 
 ```bash
-pip install -e .
-python -m pytest tests/ -v
+uv sync --extra dev
+uv run pytest tests/ -v
 ```
 
 ---

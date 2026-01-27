@@ -6,20 +6,20 @@
 
 開発環境のセットアップと、コア技術（分割・リンク書き換え）の実現性検証を行う。
 
-- [ ] **1.1. Project Setup**
-  - [ ] `poetry init` && `pyproject.toml` 作成
-  - [ ] 依存ライブラリ追加 (`openpyxl`, `click`) → `poetry add`
-  - [ ] Git リポジトリ初期化・`.gitignore` 設定 (Mac/Python用)
-  - [ ] `src/` ディレクトリと基本パッケージ構造作成
-- [ ] **1.2. Core Logic Prototype (Delete Other Sheets)**
-  - [ ] 入力 `.xlsx` を読み込み、シート名を列挙するスクリプト作成。
-  - [ ] "Delete Other Sheets" 方式で、特定シートだけを残して別名保存する関数実装 (`workbook_splitter.py`)。
-  - [ ] **ユニットテスト**: スタイル（色、フォント、結合セル）が維持されているか確認。
-  - [ ] **テストデータ**: シンプルな 3 シート `.xlsx` ファイルを作成。
-- [ ] **1.3. Dependency: 1.1 → 1.2 | 1.4 (以降の全フェーズ)**
-- [ ] **1.4. ファイル名サニタイズ関数**
-  - [ ] 禁止文字 (`/`, `\\`, `:`, `*`, `?`, `"`, `<`, `>`, `|`) を `_` に置換。
-  - [ ] セパレーター `__SHEET__` でシート名と part 分割を区別するロジック。
+- [×] **1.1. Project Setup**
+  - [×] `poetry init` && `pyproject.toml` 作成
+  - [×] 依存ライブラリ追加 (`openpyxl`, `click`) → `poetry add`
+  - [×] Git リポジトリ初期化・`.gitignore` 設定 (Mac/Python用)
+  - [×] `src/` ディレクトリと基本パッケージ構造作成
+- [×] **1.2. Core Logic Prototype (Delete Other Sheets)**
+  - [×] 入力 `.xlsx` を読み込み、シート名を列挙するスクリプト作成。
+  - [×] "Delete Other Sheets" 方式で、特定シートだけを残して別名保存する関数実装 (`workbook_splitter.py`)。
+  - [×] **ユニットテスト**: スタイル（色、フォント、結合セル）が維持されているか確認。
+  - [×] **テストデータ**: シンプルな 3 シート `.xlsx` ファイルを作成。
+- [×] **1.3. Dependency: 1.1 → 1.2 | 1.4 (以降の全フェーズ)**
+- [×] **1.4. ファイル名サニタイズ関数**
+  - [×] 禁止文字 (`/`, `\\`, `:`, `*`, `?`, `"`, `<`, `>`, `|`) を `_` に置換。
+  - [×] セパレーター `__SHEET__` でシート名と part 分割を区別するロジック。
 
 ## Phase 2: Hyperlink Handling (MVP Core)
 
@@ -27,18 +27,18 @@
 
 **難所注記**: 複雑な数式内のシート参照（`=SUM(Sheet2!A1:A10)`）は v1.0 では対象外。ハイパーリンク (Hyperlink オブジェクト) のみを処理する。
 
-- [ ] **2.1. Link Parsing & Detection**
-  - [ ] セルから `Hyperlink` オブジェクトを抽出する関数 (`extract_hyperlinks.py`)。
-  - [ ] リンク先文字列を解析し、内部参照 (`#SheetName!A1`) かどうかを判定する正規表現実装。
-  - [ ] **ユニットテスト**: 内部リンク・外部リンク・URL が正しく分類されることを確認。
-- [ ] **2.2. Link Target Mapping**
-  - [ ] 参照先シート名から、分割後のファイル名 (`{base}__SHEET__{sheet}.xlsx`) をマッピングする関数。
-  - [ ] セパレーター `__SHEET__` 形式に対応。
-- [ ] **2.3. Link Rewriting Engine**
-  - [ ] `openpyxl` でハイパーリンクを External Link に更新する処理の実装 (`hyperlink_rewriter.py`)。
-  - [ ] `external:./filename.xlsx#SheetName!A1` 相対パス形式で記述。
-  - [ ] **ユニットテスト**: 書き換え後の Excel をプログラムで開き、リンク先が正確に更新されていることを確認。
-- [ ] **2.4. Dependency: 1.2 → 2.1, 2.2 | 2.3 (リンク書き換え前提)**
+- [×] **2.1. Link Parsing & Detection**
+  - [×] セルから `Hyperlink` オブジェクトを抽出する関数 (`extract_hyperlinks.py`)。
+  - [×] リンク先文字列を解析し、内部参照 (`#SheetName!A1`) かどうかを判定する正規表現実装。
+  - [×] **ユニットテスト**: 内部リンク・外部リンク・URL が正しく分類されることを確認。
+- [×] **2.2. Link Target Mapping**
+  - [×] 参照先シート名から、分割後のファイル名 (`{base}__SHEET__{sheet}.xlsx`) をマッピングする関数。
+  - [×] セパレーター `__SHEET__` 形式に対応。
+- [×] **2.3. Link Rewriting Engine**
+  - [×] `openpyxl` でハイパーリンクを External Link に更新する処理の実装 (`hyperlink_rewriter.py`)。
+  - [×] `external:./filename.xlsx#SheetName!A1` 相対パス形式で記述。
+  - [×] **ユニットテスト**: 書き換え後の Excel をプログラムで開き、リンク先が正確に更新されていることを確認。
+- [×] **2.4. Dependency: 1.2 → 2.1, 2.2 | 2.3 (リンク書き換え前提)**
 
 ## Phase 3: Large Sheet Splitting (Optional Spec)
 
