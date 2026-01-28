@@ -3,7 +3,7 @@ import sys
 import click
 from openpyxl import load_workbook
 
-from .splitter import split_workbook_by_sheet
+from .splitter import split_workbook_by_sheet, has_shapes_or_images
 from .hyperlinks import rewrite_hyperlinks_zip, has_internal_links
 from .row_splitter import split_sheet_by_rows, compute_all_boundaries
 from .utils import get_sheet_filename, get_part_filename
@@ -129,6 +129,22 @@ def main(input_file, output_dir, max_rows, dry_run, verbose):
         except Exception as e:
             click.echo(f"Error: Failed to analyze workbook: {e}", err=True)
             sys.exit(1)
+
+        # Alert: Warn about shape/image loss due to row splitting (only if shapes exist)
+        if split_map:
+            sheets_with_shapes = []
+            for sheet_name, boundaries in split_map.items():
+                if has_shapes_or_images(input_file, sheet_name):
+                    sheets_with_shapes.append((sheet_name, len(boundaries)))
+
+            if sheets_with_shapes:
+                click.echo(click.style(
+                    f"\nWARNING: Shapes and images will be lost in {len(sheets_with_shapes)} sheet(s) due to row splitting:",
+                    fg='yellow'
+                ))
+                for sheet_name, parts in sheets_with_shapes:
+                    click.echo(click.style(f"  - {sheet_name} ({parts} parts)", fg='yellow'))
+                click.echo()
 
         # Step 3: Conditional post-processing for each sheet
         click.echo(">> Phase 3: Post-processing sheets...")

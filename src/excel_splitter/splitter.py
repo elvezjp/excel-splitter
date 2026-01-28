@@ -199,3 +199,49 @@ def _edit_content_types(data: bytes, targets_to_remove: set[str]) -> bytes:
         content = re.sub(pattern, '', content)
 
     return content.encode('utf-8')
+
+
+def has_shapes_or_images(input_path: str, sheet_name: str) -> bool:
+    """
+    指定されたシートに図形（Shape）または画像が含まれているかを判定する。
+    ZIP操作でシートのリレーションファイルを確認し、drawingへの参照があるかをチェックする。
+
+    Args:
+        input_path: Excelファイルのパス
+        sheet_name: チェック対象のシート名
+
+    Returns:
+        図形・画像が含まれている場合はTrue、そうでなければFalse
+    """
+    with zipfile.ZipFile(input_path, 'r') as zip_file:
+        # シート情報を取得
+        sheet_info_list = get_sheet_info(zip_file)
+
+        # シート名からシートファイルパスを取得
+        sheet_target = None
+        for sheet_info in sheet_info_list:
+            if sheet_info['name'] == sheet_name:
+                sheet_target = sheet_info['target']
+                break
+
+        if not sheet_target:
+            return False
+
+        # シートのリレーションファイルパスを構築
+        # xl/worksheets/sheet1.xml -> xl/worksheets/_rels/sheet1.xml.rels
+        sheet_filename = os.path.basename(sheet_target)
+        rels_path = f"xl/worksheets/_rels/{sheet_filename}.rels"
+
+        # リレーションファイルが存在するか確認
+        if rels_path not in zip_file.namelist():
+            return False
+
+        # リレーションファイルを読み込み、drawingへの参照を確認
+        rels_content = zip_file.read(rels_path).decode('utf-8')
+
+        # drawing関連のリレーションタイプをチェック
+        # http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
+        if 'relationships/drawing' in rels_content:
+            return True
+
+    return False
