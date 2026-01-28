@@ -100,6 +100,11 @@ A sample Excel file is provided for testing. This file contains multiple sheets,
 uv run excel-splitter tests/fixtures/manual_test.xlsx -o dist --max-rows 50
 ```
 
+### Important Notes
+
+- **Cross-sheet references**: Formulas (e.g., `=Sheet2!A1`) and chart data sources referencing other sheets will lose their references after splitting
+- **Shapes and images during row splitting**: Shapes and images are lost in sheets where row splitting (`--max-rows`) occurs
+
 ## Main Options
 
 | Option | Default | Description |

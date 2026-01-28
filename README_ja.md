@@ -100,6 +100,11 @@ uv run excel-splitter input.xlsx --verbose -o output/
 uv run excel-splitter tests/fixtures/manual_test.xlsx -o dist --max-rows 50
 ```
 
+### 注意事項
+
+- **別シート参照**: 数式（`=Sheet2!A1`）やグラフのデータソースで別シートを参照している場合、分割後に参照先が失われます
+- **行分割時の図形・画像**: `--max-rows` による行分割が発生したシートでは、Shape（図形）や画像は失われます
+
 ## 主要オプション
 
 | オプション | デフォルト | 説明 |
