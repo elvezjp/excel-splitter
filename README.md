@@ -165,9 +165,7 @@ excel-splitter/
 - Only supports `.xlsx` format (`.xlsm` macro-enabled files are not supported)
 - Does not rewrite sheet references in Excel formulas (e.g., `=SUM(Sheet2!A1:A10)`) - only hyperlinks
 - Full preservation of conditional formatting is not guaranteed
-- Shapes and images:
-  - Preserved in sheets without internal links (hyperlinks to other sheets) and no row splitting
-  - Lost in sheets where internal link rewriting or row splitting (`--max-rows`) occurs
+- Shapes and images are lost in sheets where row splitting (`--max-rows`) occurs
 
 ## Security
 
