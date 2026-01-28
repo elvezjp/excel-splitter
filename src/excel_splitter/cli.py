@@ -4,7 +4,7 @@ import click
 from openpyxl import load_workbook
 
 from .splitter import split_workbook_by_sheet
-from .hyperlinks import rewrite_hyperlinks_in_workbook, has_internal_links
+from .hyperlinks import rewrite_hyperlinks_zip, has_internal_links
 from .row_splitter import split_sheet_by_rows, compute_all_boundaries
 from .utils import get_sheet_filename, get_part_filename
 
@@ -165,20 +165,17 @@ def main(input_file, output_dir, max_rows, dry_run, verbose):
                         final_file_list.append(file_path)
 
                 elif needs_link_rewrite:
-                    # Hyperlink rewriting (openpyxl) - shapes will be lost
+                    # Hyperlink rewriting (ZIP/XML) - shapes/images are preserved
                     if verbose:
-                        click.echo(f"  [Link Rewrite] Sheet '{sheet_name}' has internal links. Rewriting...")
+                        click.echo(f"  [Link Rewrite] Sheet '{sheet_name}' has internal links. Rewriting (ZIP/XML)...")
 
-                    wb_split = load_workbook(file_path)
-                    rewrite_hyperlinks_in_workbook(wb_split, base_name, sheet_name, split_map, verbose)
-                    wb_split.save(file_path)
-                    wb_split.close()
+                    rewrite_hyperlinks_zip(file_path, base_name, sheet_name, split_map, verbose)
                     final_file_list.append(file_path)
 
                 else:
-                    # No post-processing needed - shapes are preserved
+                    # No post-processing needed
                     if verbose:
-                        click.echo(f"  [No Change] Sheet '{sheet_name}' - shapes/images preserved")
+                        click.echo(f"  [No Change] Sheet '{sheet_name}'")
                     final_file_list.append(file_path)
 
             except Exception as e:
