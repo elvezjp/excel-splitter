@@ -39,6 +39,7 @@ IXV addresses the challenges of understanding, structuring, and utilizing Japane
 - [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
 - [SECURITY.md](SECURITY.md) - Security policy
 - [spec.md](spec.md) - Technical specification
+- [docs/examples/](docs/examples/) - Sample input/output
 
 ## Setup
 
@@ -158,6 +159,7 @@ excel-splitter/
 │       └── utils.py         # Utilities
 ├── tests/                   # Test code
 ├── docs/                    # Documentation
+│   └── examples/            # Sample input/output
 ├── pyproject.toml
 ├── README.md
 ├── CHANGELOG.md
