@@ -10,6 +10,8 @@
 
 A Python CLI tool for splitting Excel files. Splits multiple sheets into individual files and automatically converts inter-sheet hyperlinks to external file links.
 
+![Input/Output Example](docs/assets/example.png)
+
 ## Use Cases
 
 - **Splitting Large Excel Files**: Split large Excel files by sheet or by row count

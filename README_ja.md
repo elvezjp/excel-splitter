@@ -10,6 +10,8 @@
 
 Excel ファイルを分割するための Python CLI ツール。複数シートを個別ファイルに分割し、シート間ハイパーリンクを外部リンクへ自動変換します。
 
+![Input/Output Example](docs/assets/example.png)
+
 ## ユースケース
 
 - **大規模 Excel の分割**: 巨大な Excel ファイルをシート単位・行数単位で分割
