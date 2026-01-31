@@ -100,7 +100,7 @@ uv run excel-splitter input.xlsx --verbose -o output/
 A sample Excel file is provided for testing. This file contains multiple sheets, styles, and hyperlinks, allowing you to verify all major features.
 
 ```bash
-uv run excel-splitter "docs/examples/20260121AIオーディター形式サンプルコーディング規約.xlsx" -o dist
+uv run excel-splitter "docs/examples/シート分割サンプル.xlsx" -o dist
 ```
 
 ### Important Notes

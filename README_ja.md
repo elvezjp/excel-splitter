@@ -100,7 +100,7 @@ uv run excel-splitter input.xlsx --verbose -o output/
 動作確認用の Excel ファイルを用意しています。このファイルには複数シート、スタイル、ハイパーリンクが含まれており、主要機能を一通り確認できます。
 
 ```bash
-uv run excel-splitter "docs/examples/20260121AIオーディター形式サンプルコーディング規約.xlsx" -o dist
+uv run excel-splitter "docs/examples/シート分割サンプル.xlsx" -o dist
 ```
 
 ### 注意事項
