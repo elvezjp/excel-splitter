@@ -35,9 +35,9 @@ IXVでは、開発方法論とOSSを提供することで、AI活用を現場に
 
 ## ドキュメント
 
-- [CHANGELOG.md](CHANGELOG.md) - 変更履歴
-- [CONTRIBUTING.md](CONTRIBUTING.md) - コントリビューション方法
-- [SECURITY.md](SECURITY.md) - セキュリティポリシー
+- [CHANGELOG_ja.md](CHANGELOG_ja.md) - 変更履歴
+- [CONTRIBUTING_ja.md](CONTRIBUTING_ja.md) - コントリビューション方法
+- [SECURITY_ja.md](SECURITY_ja.md) - セキュリティポリシー
 - [spec.md](spec.md) - 技術仕様書
 - [docs/examples/](docs/examples/) - サンプル入出力
 
@@ -161,10 +161,10 @@ excel-splitter/
 ├── docs/                    # ドキュメント
 │   └── examples/            # サンプル入出力
 ├── pyproject.toml
-├── README.md
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── SECURITY.md
+├── README.md / README_ja.md
+├── CHANGELOG.md / CHANGELOG_ja.md
+├── CONTRIBUTING.md / CONTRIBUTING_ja.md
+├── SECURITY.md / SECURITY_ja.md
 ├── spec.md
 └── LICENSE
 ```
@@ -178,14 +178,14 @@ excel-splitter/
 
 ## セキュリティ
 
-セキュリティに関する詳細は [SECURITY.md](SECURITY.md) を参照してください。
+セキュリティに関する詳細は [SECURITY_ja.md](SECURITY_ja.md) を参照してください。
 
 - 入力ファイルは信頼できるソースからのものに限定してください
 - 出力ディレクトリへの書き込み権限を適切に設定してください
 
 ## コントリビューション
 
-コントリビューションを歓迎します。詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+コントリビューションを歓迎します。詳細は [CONTRIBUTING_ja.md](CONTRIBUTING_ja.md) を参照してください。
 
 - バグ報告: [GitHub Issues](https://github.com/elvezjp/excel-splitter/issues)
 - 機能提案: [GitHub Issues](https://github.com/elvezjp/excel-splitter/issues)
@@ -193,7 +193,7 @@ excel-splitter/
 
 ## 変更履歴
 
-詳細は [CHANGELOG.md](CHANGELOG.md) を参照してください。
+詳細は [CHANGELOG_ja.md](CHANGELOG_ja.md) を参照してください。
 
 ## ライセンス
 

@@ -1,13 +1,15 @@
-# 変更履歴
+# Changelog
 
-このプロジェクトに対するすべての重要な変更はこのファイルに記録されます。
+[English](./CHANGELOG.md) | [日本語](./CHANGELOG_ja.md)
+
+All notable changes to this project will be recorded in this file.
 
 ## [0.1.0] - 2026-01-27
 
-### 追加
+### Added
 
-- **ワークブック分割**: 複数シートを含む Excel ファイルを、シートごとに個別の `.xlsx` ファイルに分割
-- **ハイパーリンク書き換え**: 内部リンク（例: `#Sheet2!A1`）を検出し、分割後の外部ファイルへのリンク（例: `./Base__SHEET__Sheet2.xlsx#Sheet2!A1`）に書き換え
-- **行分割**: `--max-rows` オプションによる大規模シートの複数ファイル分割をサポート
-- **CLI**: `click` を使用した堅牢なコマンドラインインターフェース（出力ディレクトリ指定、ドライラン機能）
-- **書式維持**: 「他シート削除」方式により、元のスタイルと書式を可能な限り維持
+- **Workbook splitting**: Split Excel files containing multiple sheets into individual `.xlsx` files, one per sheet
+- **Hyperlink rewriting**: Detect internal links (e.g., `#Sheet2!A1`) and rewrite them as links to the split external files (e.g., `./Base__SHEET__Sheet2.xlsx#Sheet2!A1`)
+- **Row splitting**: Support for splitting large sheets into multiple files via the `--max-rows` option
+- **CLI**: Robust command-line interface built with `click` (output directory, dry-run, and more)
+- **Format preservation**: Preserve original styles and formatting as much as possible by using the "delete other sheets" approach
