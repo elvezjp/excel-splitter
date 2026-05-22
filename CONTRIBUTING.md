@@ -1,244 +1,245 @@
 # Contributing to excel-splitter
 
-excel-splitter への貢献に興味を持っていただきありがとうございます。このドキュメントでは、貢献の方法について説明します。
+[English](./CONTRIBUTING.md) | [日本語](./CONTRIBUTING_ja.md)
 
-## 貢献の方法
+Thank you for your interest in contributing to excel-splitter. This document explains how you can contribute.
 
-### バグの報告
+## How to Contribute
 
-バグを見つけた場合は、GitHub Issue を作成してください。
+### Reporting Bugs
 
-### 機能改善の提案
+If you find a bug, please create a GitHub Issue.
 
-新機能や改善のアイデアがある場合は、GitHub Issue で提案してください。
+### Proposing Improvements
 
-### プルリクエスト
+If you have ideas for new features or improvements, please propose them in a GitHub Issue.
 
-コードの修正や新機能の追加は、プルリクエストを通じて行います。
+### Pull Requests
 
-## バグ報告の必須情報
+Code changes and new features are submitted via Pull Requests.
 
-Issue を作成する際は、以下の情報を含めてください：
+## Required Information for Bug Reports
 
-- **明確で説明的なタイトル**: 問題を端的に表すタイトル
-- **再現手順**: 問題を再現するための具体的な手順
-- **期待される動作**: 本来どのように動作すべきか
-- **実際の動作**: 実際にどのような動作をしたか
-- **サンプルファイル**: 可能であれば、問題を再現できる Excel ファイル
-- **バージョン情報**:
-  - excel-splitter のバージョン
-  - Python のバージョン
-  - OS とバージョン
+When creating an Issue, please include the following:
 
-### バグ報告の例
+- **Clear and descriptive title**: A title that succinctly conveys the problem
+- **Reproduction steps**: Concrete steps to reproduce the issue
+- **Expected behavior**: How the tool should behave
+- **Actual behavior**: What actually happened
+- **Sample file**: If possible, an Excel file that reproduces the issue
+- **Version information**:
+  - excel-splitter version
+  - Python version
+  - OS and version
+
+### Bug Report Example
 
 ```
-タイトル: ハイパーリンクが日本語シート名で正しく書き換えられない
+Title: Hyperlinks are not rewritten correctly for Japanese sheet names
 
-再現手順:
-1. 日本語名のシート（例: "売上データ"）を含む Excel ファイルを作成
-2. 他のシートから日本語シートへのハイパーリンクを設定
-3. excel-splitter で分割を実行
+Reproduction steps:
+1. Create an Excel file containing a Japanese-named sheet (e.g., "売上データ")
+2. Add a hyperlink from another sheet to the Japanese-named sheet
+3. Run excel-splitter to split the file
 
-期待される動作:
-ハイパーリンクが分割後のファイルを正しく参照する
+Expected behavior:
+The hyperlinks correctly reference the split files.
 
-実際の動作:
-ハイパーリンクが壊れ、クリックしてもエラーが発生する
+Actual behavior:
+The hyperlinks are broken and clicking them produces an error.
 
-バージョン情報:
+Version information:
 - excel-splitter: 0.1.0
 - Python: 3.12.0
 - OS: macOS 14.0
 ```
 
-## 機能改善提案の必須情報
+## Required Information for Feature Proposals
 
-機能提案の Issue には以下を含めてください：
+When creating a feature proposal Issue, please include:
 
-- **明確で説明的なタイトル**: 提案する機能を端的に表すタイトル
-- **機能の詳細な説明**: どのような機能か、どのように動作するか
-- **ユースケースとメリット**: なぜこの機能が必要か、どのような問題を解決するか
-- **関連する例やモックアップ**: 可能であれば、具体的な使用例や画面イメージ
+- **Clear and descriptive title**: A title that succinctly conveys the proposed feature
+- **Detailed feature description**: What the feature does and how it works
+- **Use cases and benefits**: Why the feature is needed and what problems it solves
+- **Related examples or mockups**: Concrete usage examples or screen mockups, if possible
 
-## プルリクエストの手順
+## Pull Request Procedure
 
-### 1. リポジトリのフォークとブランチ作成
+### 1. Fork the Repository and Create a Branch
 
 ```bash
-# リポジトリをフォーク（GitHub UI から）
+# Fork the repository (from the GitHub UI)
 
-# フォークしたリポジトリをクローン
+# Clone your fork
 git clone https://github.com/your-username/excel-splitter.git
 cd excel-splitter
 
-# 新しいブランチを作成
-git checkout -b {ユーザー名}/{日付YYYYMMDD}-{内容}
+# Create a new branch
+git checkout -b {username}/{YYYYMMDD}-{description}
 ```
 
-**ブランチ命名規則**: `{ユーザー名}/{日付YYYYMMDD}-{内容}`
+**Branch naming convention**: `{username}/{YYYYMMDD}-{description}`
 
-例:
+Examples:
 - `taro/20260127-fix-hyperlink-bug`
 - `hanako/20260128-add-csv-export`
 
-### 2. コーディングスタイルへの準拠
+### 2. Follow the Coding Style
 
-Python コードは PEP 8 スタイルガイドラインに従ってください。
+Python code should follow the PEP 8 style guidelines.
 
-### 3. テストの作成と実行
+### 3. Write and Run Tests
 
-新機能やバグ修正には、対応するテストを追加してください。
+Add tests for new features and bug fixes.
 
 ```bash
-# テストの実行
+# Run tests
 uv run pytest tests/ -v
 ```
 
-### 4. ドキュメントの更新
+### 4. Update Documentation
 
-必要に応じて、README.md や関連ドキュメントを更新してください。
+Update README.md and related documentation as needed.
 
-### 5. コミットメッセージの書き方
+### 5. Commit Message Style
 
-コミットメッセージは日本語または英語で、変更内容を明確に記述してください。
+Write commit messages in English or Japanese, clearly describing the change.
 
-### 6. プッシュと PR 送信
+### 6. Push and Open a PR
 
 ```bash
-# 変更をプッシュ
-git push origin {ブランチ名}
+# Push your changes
+git push origin {branch-name}
 
-# GitHub UI から Pull Request を作成
+# Open a Pull Request from the GitHub UI
 ```
 
-### 7. レビュー待ちとフィードバック対応
+### 7. Review and Feedback
 
-- レビューコメントには迅速に対応してください
-- 必要に応じてコードを修正し、追加コミットを行ってください
+- Respond to review comments promptly
+- Update your code and push additional commits as needed
 
-### PR 送信前のチェックリスト
+### Pre-submission Checklist
 
-- [ ] テストがすべてパスする
-- [ ] 新機能にはテストを追加した
-- [ ] ドキュメントを更新した（必要な場合）
-- [ ] コミットメッセージが明確である
+- [ ] All tests pass
+- [ ] Tests have been added for new functionality
+- [ ] Documentation has been updated (if necessary)
+- [ ] Commit messages are clear
 
-## 開発環境のセットアップ
+## Development Environment Setup
 
-### 前提条件
+### Prerequisites
 
-- Python 3.10 以上
-- [uv](https://docs.astral.sh/uv/) パッケージマネージャー
+- Python 3.10 or higher
+- [uv](https://docs.astral.sh/uv/) package manager
 
-### インストール手順
+### Installation
 
 ```bash
-# リポジトリをクローン
+# Clone the repository
 git clone https://github.com/elvezjp/excel-splitter.git
 cd excel-splitter
 
-# uv のインストール（未インストールの場合）
+# Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 依存関係のインストール（開発用含む）
+# Install dependencies (including development)
 uv sync --extra dev
 ```
 
-## テストの実行方法
+## Running Tests
 
 ```bash
-# すべてのテストを実行
+# Run all tests
 uv run pytest tests/ -v
 
-# 特定のテストファイルを実行
+# Run a specific test file
 uv run pytest tests/test_utils.py -v
 
-# 特定のテストケースを実行
+# Run a specific test case
 uv run pytest tests/test_utils.py::TestSanitizeFilename -v
 ```
 
-## コーディングガイドライン
+## Coding Guidelines
 
-### スタイルガイド
+### Style Guide
 
-- [PEP 8](https://peps.python.org/pep-0008/) に準拠
-- インデントは 4 スペース
-- 行の最大長は 88 文字（Black のデフォルト）
+- Follow [PEP 8](https://peps.python.org/pep-0008/)
+- Use 4 spaces for indentation
+- Maximum line length is 88 characters (Black default)
 
-### 命名規則
+### Naming Conventions
 
-- 関数名・変数名: `snake_case`
-- クラス名: `PascalCase`
-- 定数: `UPPER_SNAKE_CASE`
+- Functions and variables: `snake_case`
+- Classes: `PascalCase`
+- Constants: `UPPER_SNAKE_CASE`
 
-### ドキュメント
+### Documentation
 
-- 公開関数には docstring を記述
-- 複雑なロジックにはコメントを追加
+- Write docstrings for public functions
+- Add comments for complex logic
 
 ```python
 def split_workbook_by_sheet(input_file: str, output_dir: str) -> list[str]:
     """
-    Excel ワークブックをシートごとに分割する。
+    Split an Excel workbook by sheet.
 
     Args:
-        input_file: 入力 Excel ファイルのパス
-        output_dir: 出力ディレクトリのパス
+        input_file: Path to the input Excel file
+        output_dir: Path to the output directory
 
     Returns:
-        生成されたファイルパスのリスト
+        List of generated file paths
     """
     ...
 ```
 
-## コミットメッセージのルール
+## Commit Message Rules
 
-### 形式
-
-```
-{変更の種類}: {変更の概要}
-
-{詳細な説明（必要に応じて）}
-
-{関連 Issue への参照（必要に応じて）}
-```
-
-### 良い例
+### Format
 
 ```
-fix: 日本語シート名のハイパーリンク書き換えを修正
+{change type}: {summary of the change}
 
-シート名にマルチバイト文字が含まれる場合、エンコーディングが
-正しく処理されていなかった問題を修正。
+{detailed description (if needed)}
+
+{related Issue references (if applicable)}
+```
+
+### Good Examples
+
+```
+fix: correct hyperlink rewriting for Japanese sheet names
+
+When sheet names contained multibyte characters, encoding was not
+handled correctly. This commit fixes that issue.
 
 Fixes #123
 ```
 
 ```
-feat: CSV エクスポート機能を追加
+feat: add CSV export
 
---format csv オプションを追加し、Excel だけでなく CSV 形式での
-出力をサポート。
+Add a --format csv option to support CSV output in addition to Excel.
 ```
 
-### 悪い例
+### Bad Examples
 
 ```
-修正  # 何を修正したか不明
+fix  # Unclear what was fixed
 ```
 
 ```
-いろいろ直した  # 具体性がない
+misc fixes  # Lacks specificity
 ```
 
-## 問い合わせ先
+## Where to Reach Out
 
-- **一般的な質問**: GitHub Issue を作成し、`question` ラベルを付けてください
-- **機能提案**: GitHub Issue を作成し、`enhancement` ラベルを付けてください
-- **バグ報告**: GitHub Issue を作成し、`bug` ラベルを付けてください
+- **General questions**: Open a GitHub Issue with the `question` label
+- **Feature proposals**: Open a GitHub Issue with the `enhancement` label
+- **Bug reports**: Open a GitHub Issue with the `bug` label
 
-## 参考リンク
+## References
 
 - [GitHub Contributing Guidelines](https://github.com/github/docs/blob/main/CONTRIBUTING.md)
 - [PEP 8 -- Style Guide for Python Code](https://peps.python.org/pep-0008/)

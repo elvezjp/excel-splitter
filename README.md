@@ -162,9 +162,13 @@ excel-splitter/
 │   └── examples/            # Sample input/output
 ├── pyproject.toml
 ├── README.md
+├── README_ja.md
 ├── CHANGELOG.md
+├── CHANGELOG_ja.md
 ├── CONTRIBUTING.md
+├── CONTRIBUTING_ja.md
 ├── SECURITY.md
+├── SECURITY_ja.md
 ├── spec.md
 └── LICENSE
 ```

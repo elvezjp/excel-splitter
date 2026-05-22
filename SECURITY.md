@@ -1,124 +1,126 @@
 # Security Policy
 
-## サポートバージョン
+[English](./SECURITY.md) | [日本語](./SECURITY_ja.md)
 
-セキュリティアップデートは以下のバージョンに対して提供されます。最新バージョンの使用を推奨します。
+## Supported Versions
 
-| バージョン | サポート状況       |
-| ---------- | ------------------ |
-| 0.1.x      | :white_check_mark: |
-| < 0.1      | :x:                |
+Security updates are provided for the following versions. We recommend using the latest version.
 
-## 脆弱性の報告方法
+| Version | Supported          |
+| ------- | ------------------ |
+| 0.1.x   | :white_check_mark: |
+| < 0.1   | :x:                |
 
-セキュリティ上の脆弱性を発見された場合は、**公開の Issue を作成しないでください**。
+## How to Report a Vulnerability
 
-### 報告方法
+If you discover a security vulnerability, **please do not open a public Issue**.
 
-以下のいずれかの方法でご報告ください：
+### Reporting Methods
 
-1. **GitHub Security Advisories（推奨）**
-   - リポジトリの [Security Advisories](https://github.com/elvezjp/excel-splitter/security/advisories/new) からプライベートな報告を作成してください。
+Please use one of the following methods:
 
-2. **メール**
-   - セキュリティチームに直接メールでご連絡ください。
+1. **GitHub Security Advisories (recommended)**
+   - Create a private report from the repository's [Security Advisories](https://github.com/elvezjp/excel-splitter/security/advisories/new).
 
-### 報告に含めるべき情報
+2. **Email**
+   - Contact the security team directly by email.
 
-- **脆弱性の説明**: 問題の概要と技術的な詳細
-- **再現手順**: 問題を再現するための具体的な手順
-- **潜在的な影響と重大度**: どのような影響があるか、その深刻度
-- **修正案や緩和策の提案**: 可能であれば、修正方法の提案
-- **連絡先情報**: フォローアップのための連絡先（任意）
+### What to Include in Your Report
 
-### 報告例
+- **Vulnerability description**: A summary of the issue and technical details
+- **Reproduction steps**: Concrete steps to reproduce the issue
+- **Potential impact and severity**: What impact the vulnerability could have and how severe it is
+- **Suggested fix or mitigation**: A proposed fix or mitigation, if available
+- **Contact information**: Your contact for follow-up (optional)
+
+### Report Example
 
 ```
-件名: [SECURITY] 悪意のあるExcelファイルによるパス走査の脆弱性
+Subject: [SECURITY] Path traversal vulnerability via malicious Excel file
 
-説明:
-特定の形式の Excel ファイルを処理する際、出力ディレクトリ外にファイルが
-作成される可能性があります。
+Description:
+When processing certain Excel files, files may be created outside the
+specified output directory.
 
-再現手順:
-1. シート名に "../" を含む Excel ファイルを作成
-2. excel-splitter で処理を実行
-3. 出力ディレクトリ外にファイルが作成される
+Reproduction steps:
+1. Create an Excel file with a sheet name containing "../"
+2. Process the file with excel-splitter
+3. Files are created outside the output directory
 
-影響:
-攻撃者が任意のディレクトリにファイルを作成できる可能性があります。
-重大度: 高
+Impact:
+An attacker may be able to create files in arbitrary directories.
+Severity: High
 
-修正案:
-シート名のサニタイズ処理でパス走査文字列を除去する。
+Suggested fix:
+Strip path-traversal sequences during sheet-name sanitization.
 ```
 
-## 対応スケジュール
+## Response Schedule
 
-- **初回応答**: 48時間以内
-- **状況更新**: 7日以内
-- **解決**: 重大度に応じて
-  - 緊急: 14日以内
-  - 高: 30日以内
-  - 中: 60日以内
-  - 低: 次回リリースサイクル
+- **Initial response**: Within 48 hours
+- **Status updates**: Within 7 days
+- **Resolution**: Based on severity
+  - Critical: Within 14 days
+  - High: Within 30 days
+  - Medium: Within 60 days
+  - Low: Next release cycle
 
-## セキュリティに関する考慮事項
+## Security Considerations
 
-### ファイル処理時の注意点
+### File Processing
 
-- 入力ファイルは信頼できるソースからのものに限定してください
-- 出力ディレクトリは適切なアクセス権限で設定してください
-- 処理前にファイルサイズを確認し、極端に大きいファイルには注意してください
+- Process only files from trusted sources
+- Set appropriate access permissions on the output directory
+- Verify file size before processing; be cautious with extremely large files
 
-### 入力検証
+### Input Validation
 
-- `.xlsx` 拡張子のファイルのみを処理します
-- シート名に含まれる禁止文字（`/`, `\`, `:`, `*`, `?`, `"`, `<`, `>`, `|`）はサニタイズされます
-- 出力ディレクトリの書き込み権限を確認します
+- Only `.xlsx` files are processed
+- Forbidden characters in sheet names (`/`, `\`, `:`, `*`, `?`, `"`, `<`, `>`, `|`) are sanitized
+- Write permissions on the output directory are checked
 
-### 出力のセキュリティ
+### Output Security
 
-- 出力ファイル名はサニタイズされ、パス走査攻撃を防止します
-- 出力は指定されたディレクトリ内にのみ作成されます
+- Output filenames are sanitized to prevent path-traversal attacks
+- Output is written only inside the specified directory
 
-### 依存関係のセキュリティ
+### Dependency Security
 
-- 依存ライブラリ（`openpyxl`, `click`）は定期的に更新されます
-- `uv` を使用して依存関係の整合性を管理しています
+- Dependencies (`openpyxl`, `click`) are updated regularly
+- `uv` is used to manage dependency integrity
 
-### Dependabot アラートの運用方針
+### Dependabot Alerts Policy
 
-**Malware タブ**: 発生場所を問わず必ず修正対応する
+**Malware tab**: Always remediate, regardless of where it appears.
 
-**Vulnerable**: 以下の表に従う
+**Vulnerable**: Follow the table below.
 
-| 対象 | 対応 |
-|------|------|
-| 最新バージョン | **修正対応**（依存更新／PR 作成）。依存パッケージのバージョン更新のみで対応できる場合、本体バージョンは変更しない |
+| Target | Action |
+|--------|--------|
+| Latest version | **Remediate** (update dependency / open PR). When the fix is possible via a dependency version bump alone, do not change the project version. |
 
-## セキュリティのベストプラクティス
+## Security Best Practices
 
-1. **最新版を使用する**: 常に最新バージョンの excel-splitter を使用してください
-2. **入力ファイルを確認する**: 信頼できないソースからの Excel ファイルを処理する前に内容を確認してください
-3. **サンドボックス環境での実行**: 信頼できないファイルを処理する場合は、隔離された環境で実行してください
-4. **出力を検証する**: 生成されたファイルが期待通りの場所に作成されていることを確認してください
-5. **アクセス権限を制限する**: 出力ディレクトリへのアクセス権限を必要最小限に設定してください
+1. **Use the latest version**: Always use the latest version of excel-splitter
+2. **Validate input files**: Inspect Excel files from untrusted sources before processing
+3. **Run in a sandbox**: Process untrusted files in an isolated environment
+4. **Verify the output**: Check that generated files are created in the expected location
+5. **Restrict permissions**: Grant only the minimum necessary permissions on the output directory
 
-## 既知のセキュリティ制限
+## Known Security Limitations
 
-- マクロ付き Excel ファイル（`.xlsm`）は処理対象外です
-- 暗号化された Excel ファイルはサポートしていません
-- ファイル処理中のメモリ使用量は入力ファイルのサイズに依存します
+- Macro-enabled Excel files (`.xlsm`) are not processed
+- Encrypted Excel files are not supported
+- Memory usage during processing depends on the input file size
 
-## 問い合わせ先
+## Other Security Questions
 
-脆弱性ではないセキュリティ関連の質問がある場合：
+For non-vulnerability security questions:
 
-- GitHub Issue を作成し、`security` ラベルを付けてください
-- 一般的なセキュリティのベストプラクティスに関する質問も歓迎します
+- Open a GitHub Issue with the `security` label
+- General questions about security best practices are also welcome
 
-## 参考リンク
+## References
 
 - [GitHub Security Advisories](https://docs.github.com/en/code-security/security-advisories)
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
