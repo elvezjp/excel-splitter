@@ -4,6 +4,17 @@
 
 All notable changes to this project will be recorded in this file.
 
+## [0.1.1] - 2026-06-01
+
+### Added
+
+- **Drawing and image preservation**: Preserve drawings and images when splitting sheets that do not require internal hyperlink rewriting or row splitting.
+- **Shape loss warning**: Show a warning when drawings or images may be lost because a sheet requires internal hyperlink rewriting or `--max-rows` row splitting.
+
+### Changed
+
+- **Hyperlink rewriting**: Reworked internal hyperlink handling to use ZIP/XML operations for better preservation of workbook contents.
+
 ## [0.1.0] - 2026-01-27
 
 ### Added
