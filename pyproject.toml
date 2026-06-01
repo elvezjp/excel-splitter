@@ -1,6 +1,6 @@
 [project]
 name = "excel-splitter"
-version = "0.1.0"
+version = "0.1.1"
 description = "A CLI tool to split Excel files into individual sheets or row chunks while preserving hyperlinks."
 readme = "README.md"
 requires-python = ">=3.10"
